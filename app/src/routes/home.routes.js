@@ -1,8 +1,10 @@
 import React from 'react';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
 import Home from '../pages/Home';
 import Agenda from '../pages/Agenda';
+import colors from '../styles/colors';
 
 Icon.loadFont();
 
@@ -14,12 +16,12 @@ export default function HomeRoutes() {
         <Tab.Navigator
           initialRouteName="Home"
           tabBarOptions={{
-            activeTintColor: '#fff',
+            activeTintColor: colors.pink,
             labelStyle: {
-                fontSize: 15,
+              fontSize: 15,
             },
             style: {
-                backgroundColor: '#f66095',
+              backgroundColor: colors.white,
             },
           }}>
           <Tab.Screen

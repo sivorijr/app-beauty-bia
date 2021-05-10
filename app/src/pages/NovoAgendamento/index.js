@@ -3,7 +3,7 @@ import { ImageBackground, FlatList, TouchableOpacity } from 'react-native';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-import { Space, Container, Text, Div } from '../../components';
+import { Button, Space, Container, Text, Div } from '../../components';
 import api from '../../services/api';
 import colors from '../../styles/colors';
 
@@ -20,9 +20,10 @@ LocaleConfig.locales['br'] = {
     today: 'Hoje'
 };
 
-export default function AgendaScreen({ navigation }) {
+export default function NovoAgendamentoScreen({ navigation }) {
     const [markedDates, setMarkedDates] = useState(null);
     const [daySchedules, setDaySchedules] = useState(null);
+    const [showCalendar, setShowCalendar] = useState(false);
 
     useEffect(() => {
         api
@@ -43,6 +44,10 @@ export default function AgendaScreen({ navigation }) {
 
     function onDayPress(day) {
         setDaySchedules(day);
+    }
+
+    function onPressButton() {
+        setShowCalendar(!showCalendar);
     }
 
     const renderItem = ({ item }) => {
@@ -85,6 +90,16 @@ export default function AgendaScreen({ navigation }) {
     return (
         <Container height='100%'>
             <ImageBackground source={image} style={{ flex: 1, resizeMode: 'cover' }}>
+                <Container paddingVertical={20} paddingHorizontal={20}>
+                    <Button
+                        title='Criar Novo Agendamento'
+                        color={colors.pink}
+                        fontSize={20}
+                        fontWeight='bold'
+                        textAlign='center'
+                        onPress={onPressButton}
+                    />
+                </Container>
                 <Container backgroundColor={colors.green} paddingVertical={5}>
                     <Text
                         color={colors.white}
@@ -93,55 +108,64 @@ export default function AgendaScreen({ navigation }) {
                         textAlign='center'
                     >Agendamentos</Text>
                 </Container>
-                <Calendar
-                    onDayPress={onDayPress}
-                    markedDates={markedDates}
-                />
-                <Space height={20} />
                 {
-                    !daySchedules
+                    showCalendar
                     ?
-                    <Container
-                        backgroundColor={colors.green}
-                        paddingVertical={20}
-                        paddingHorizontal={10}
-                        marginHorizontal={20}
-                        borderRadius='6px'
-                    >
-                        <Text
-                            color={colors.white}
-                            fontSize={28}
-                            fontWeight='bold'
-                            textAlign='center'
-                        >
-                            <Icon name="search" size={32} color={colors.white} />{'\n'}
-                            Escolha uma data</Text>
-                    </Container>
-                    :
-                        markedDates && markedDates[daySchedules.dateString]
-                        ?
-                        <FlatList
-                            data={markedDates[daySchedules.dateString]['events']}
-                            renderItem={renderItem}
-                            keyExtractor={item => item.key}
+                    <>
+                        <Calendar
+                            onDayPress={onDayPress}
+                            markedDates={markedDates}
                         />
-                        :
-                        <Container
-                            backgroundColor={colors.green}
-                            paddingVertical={20}
-                            paddingHorizontal={10}
-                            marginHorizontal={20}
-                            borderRadius='6px'
-                        >
-                            <Text
-                                color={colors.white}
-                                fontSize={28}
-                                fontWeight='bold'
-                                textAlign='center'
+                        <Space height={20} />
+                        {
+                            !daySchedules
+                            ?
+                            <Container
+                                backgroundColor={colors.green}
+                                paddingVertical={20}
+                                paddingHorizontal={10}
+                                marginHorizontal={20}
+                                borderRadius='6px'
                             >
-                                <Icon name="search-off" size={32} color={colors.white} />{'\n'}
-                                Nenhum horario agendado para esse dia</Text>
-                        </Container>
+                                <Text
+                                    color={colors.white}
+                                    fontSize={28}
+                                    fontWeight='bold'
+                                    textAlign='center'
+                                >
+                                    <Icon name="search" size={32} color={colors.white} />{'\n'}
+                                    Escolha uma data</Text>
+                            </Container>
+                            :
+                                markedDates && markedDates[daySchedules.dateString]
+                                ?
+                                <FlatList
+                                    data={markedDates[daySchedules.dateString]['events']}
+                                    renderItem={renderItem}
+                                    keyExtractor={item => item.key}
+                                />
+                                :
+                                <Container
+                                    backgroundColor={colors.green}
+                                    paddingVertical={20}
+                                    paddingHorizontal={10}
+                                    marginHorizontal={20}
+                                    borderRadius='6px'
+                                >
+                                    <Text
+                                        color={colors.white}
+                                        fontSize={28}
+                                        fontWeight='bold'
+                                        textAlign='center'
+                                    >
+                                        <Icon name="search-off" size={32} color={colors.white} />{'\n'}
+                                        Nenhum horario agendado para esse dia</Text>
+                                </Container>
+                        }
+                    </>
+                    :
+                    <>
+                    </>
                 }
             </ImageBackground>
         </Container>

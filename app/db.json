@@ -1,0 +1,86 @@
+{
+  "getScheduled": [
+    {
+      "data": "2021-04-20",
+      "schedules": {
+        "2021-04-20": {
+          "events": [
+            {
+              "key": "0",
+              "cliente": "Sivori",
+              "trabalho": "Pé e Mão",
+              "atendimento": "Casa",
+              "hora": "12:00",
+              "tempo": "03:00:00"
+            },
+            {
+              "key": "1",
+              "cliente": "Junior",
+              "trabalho": "Mão",
+              "atendimento": "Casa",
+              "hora": "17:00",
+              "tempo": "01:00:00"
+            },
+            {
+              "key": "2",
+              "cliente": "Sivori",
+              "trabalho": "Pé e Mão",
+              "atendimento": "Casa",
+              "hora": "12:00",
+              "tempo": "03:00:00"
+            },
+            {
+              "key": "3",
+              "cliente": "Junior",
+              "trabalho": "Mão",
+              "atendimento": "Casa",
+              "hora": "17:00",
+              "tempo": "01:00:00"
+            }
+          ],
+          "selected": true,
+          "selectedColor": "#f66095"
+        }
+      }
+    },
+    {
+      "data": "2021-04-22",
+      "schedules": {
+        "2021-04-22": {
+          "events": [
+            {
+              "key": "0",
+              "cliente": "Maju",
+              "trabalho": "Pé e Mão",
+              "atendimento": "Casa",
+              "hora": "12:00",
+              "tempo": "03:00:00"
+            }
+          ],
+          "selected": true,
+          "selectedColor": "#f66095"
+        }
+      }
+    },
+    {
+      "data": "2021-05-02",
+      "schedules": {
+        "2021-05-02": {
+          "events": [
+            {
+              "key": "0",
+              "cliente": "Leo",
+              "trabalho": "Pé",
+              "atendimento": "Estabelecimento",
+              "hora": "12:00",
+              "tempo": "02:00:00"
+            }
+          ],
+          "selected": true,
+          "selectedColor": "#f66095"
+        }
+      }
+    }
+  ],
+  "profile": { "name": "typicode" }
+}
