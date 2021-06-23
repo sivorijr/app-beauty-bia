@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ImageBackground, FlatList, TouchableOpacity } from 'react-native';
+import { ImageBackground, FlatList, TouchableOpacity, Alert } from 'react-native';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
@@ -25,23 +25,72 @@ export default function AgendaScreen({ navigation }) {
     const [daySchedules, setDaySchedules] = useState(null);
 
     useEffect(() => {
-        api
-            .get("/getScheduled")
-            .then((response) => {
-                const arr = {};
+        const unsubscribe = navigation.addListener('focus', () => {
+            api
+                .get("/agendamentos")
+                .then(response => {
+                    const arr = {};
 
-                response.data.map(element => {
-                    arr[element["data"]] = element["schedules"][element["data"]];
+                    response.data.map(agendamento => {
+                        const dataAgendamento = agendamento.data.split("T")[0];
+                        const arrIndex = Object.values(arr).indexOf(dataAgendamento);
+
+                        if(arrIndex != -1) {
+                            const evento = {
+                                key: agendamento._id,
+                                cliente: agendamento.clienteID.nome,
+                                especialidade: agendamento.especialidadeID.nome,
+                                atendimento: agendamento.atendimento,
+                                hora: agendamento.data.split("T")[1].substring(0,5),
+                                tempo: agendamento.tempo,
+                                status: agendamento.status
+                            }
+
+                            arr[arrIndex].schedules[dataAgendamento].events.push(evento);
+                        } else{
+                            const schedules = {
+                                [dataAgendamento]: {
+                                    events: [],
+                                    selected: true,
+                                    selectedColor: "#f66095"
+                                }
+                            }
+
+                            const evento = {
+                                key: agendamento._id,
+                                cliente: agendamento.clienteID.nome,
+                                especialidade: agendamento.especialidadeID.nome,
+                                atendimento: agendamento.atendimento,
+                                hora: agendamento.data.split("T")[1].substring(0,5),
+                                tempo: agendamento.tempo,
+                                status: agendamento.status
+                            }
+
+                            schedules[dataAgendamento].events.push(evento);
+                            
+                            Object.assign(arr, schedules);
+                        }
+                    });
+
+                    setMarkedDates(arr);
+                })
+                .catch((error) => {
+                    Alert.alert(
+                        "Ops...",
+                        "Ocorreu um erro ao buscar os itens.",
+                        [
+                            {
+                                text: "OK"
+                            }
+                        ]
+                    );
                 });
+        });
 
-                setMarkedDates(arr);
-            })
-            .catch((error) => {
-                alert("Ocorreu um erro ao buscar os items");
-            });
-    }, []);
+        return () => unsubscribe
+    }, [navigation]);
 
-    function onDayPress(day) {
+    const onDayPress = day => {
         setDaySchedules(day);
     }
 
@@ -51,33 +100,35 @@ export default function AgendaScreen({ navigation }) {
                 <Container
                     backgroundColor={colors.green}
                     paddingTop={10}
-                    paddingBottom={15}
+                    paddingBottom={10}
                     paddingHorizontal={10}
                     marginHorizontal={20}
                     borderRadius='6px'
                 >
-                    <Container flexDirection='row' justifyContent='center'>
-                        <Text color={colors.white} fontSize={18} fontWeight='bold'>Cliente: </Text>
-                        <Text color={colors.white} fontSize={18} fontWeight='normal'>{item.cliente}</Text>
+                    <Container flexDirection='row' justifyContent='space-between' alignItems='center'>
+                        <Text color={colors.white} fontSize={28} fontWeight='bold'>{item.cliente}</Text>
+                        <Container
+                            backgroundColor={colors.pink}
+                            paddingHorizontal={10}
+                            paddingVertical={3}
+                            borderRadius='6px'
+                        >
+                            <Text color={colors.white} fontSize={18} fontWeight='bold'>{item.hora}</Text>
+                        </Container>
                     </Container>
                     <Div border={'1px solid ' + colors.pinkLight} />
-                    <Container flexDirection='row' justifyContent='center'>
-                        <Text color={colors.white} fontSize={18} fontWeight='bold'>Especialização: </Text>
-                        <Text color={colors.white} fontSize={18} fontWeight='normal'>{item.trabalho}</Text>
+                    <Container flexDirection='row' justifyContent='space-between'>
+                        <Text color={colors.white} fontSize={18} fontWeight='normal'>{item.especialidade}</Text>
+                        <Container
+                            paddingHorizontal={10}
+                            paddingVertical={3}
+                            borderRadius='6px'
+                        >
+                            <Text color={colors.white} fontSize={18} fontWeight='normal'>{item.status}</Text>
+                        </Container>
                     </Container>
-                    <Div border={'1px solid ' + colors.pinkLight} />
-                    <Container flexDirection='row' justifyContent='center'>
-                        <Text color={colors.white} fontSize={18} fontWeight='bold'>Horário: </Text>
-                        <Text color={colors.white} fontSize={18} fontWeight='normal'>{item.hora}</Text>
-                    </Container>
-                    <Div border={'1px solid ' + colors.pinkLight} />
-                    <Container flexDirection='row' justifyContent='center'>
-                        <Text color={colors.white} fontSize={18} fontWeight='bold'>Duração: </Text>
-                        <Text color={colors.white} fontSize={18} fontWeight='normal'>{item.tempo}</Text>
-                    </Container>
-                    <Div border={'1px solid ' + colors.pinkLight} />
                 </Container>
-                <Space height={20} />
+                <Space height={10} />
             </TouchableOpacity>
         );
     }
@@ -101,31 +152,6 @@ export default function AgendaScreen({ navigation }) {
                 {
                     !daySchedules
                     ?
-                    <Container
-                        backgroundColor={colors.green}
-                        paddingVertical={20}
-                        paddingHorizontal={10}
-                        marginHorizontal={20}
-                        borderRadius='6px'
-                    >
-                        <Text
-                            color={colors.white}
-                            fontSize={28}
-                            fontWeight='bold'
-                            textAlign='center'
-                        >
-                            <Icon name="search" size={32} color={colors.white} />{'\n'}
-                            Escolha uma data</Text>
-                    </Container>
-                    :
-                        markedDates && markedDates[daySchedules.dateString]
-                        ?
-                        <FlatList
-                            data={markedDates[daySchedules.dateString]['events']}
-                            renderItem={renderItem}
-                            keyExtractor={item => item.key}
-                        />
-                        :
                         <Container
                             backgroundColor={colors.green}
                             paddingVertical={20}
@@ -139,9 +165,34 @@ export default function AgendaScreen({ navigation }) {
                                 fontWeight='bold'
                                 textAlign='center'
                             >
-                                <Icon name="search-off" size={32} color={colors.white} />{'\n'}
-                                Nenhum horario agendado para esse dia</Text>
+                                <Icon name="search" size={32} color={colors.white} />{'\n'}
+                                Escolha uma data</Text>
                         </Container>
+                    :
+                        markedDates && markedDates[daySchedules.dateString]
+                        ?
+                            <FlatList
+                                data={markedDates[daySchedules.dateString]['events']}
+                                renderItem={renderItem}
+                                keyExtractor={item => item.key}
+                            />
+                        :
+                            <Container
+                                backgroundColor={colors.green}
+                                paddingVertical={20}
+                                paddingHorizontal={10}
+                                marginHorizontal={20}
+                                borderRadius='6px'
+                            >
+                                <Text
+                                    color={colors.white}
+                                    fontSize={28}
+                                    fontWeight='bold'
+                                    textAlign='center'
+                                >
+                                    <Icon name="search-off" size={32} color={colors.white} />{'\n'}
+                                    Nenhum horario agendado para esse dia</Text>
+                            </Container>
                 }
             </ImageBackground>
         </Container>

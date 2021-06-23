@@ -10,6 +10,7 @@ export const Container = styled.View`
     borderRadius: ${props => `${props.borderRadius}`};
     flexDirection: ${props => `${props.flexDirection}`};
     justifyContent: ${props => `${props.justifyContent}`};
+    alignItems: ${props => `${props.alignItems}`};
 `;
 
 export const Text = styled.Text`

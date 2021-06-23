@@ -1,11 +1,8 @@
-import { create } from 'apisauce';
+import axios from 'axios';
+import { APP_URL } from '@env';
 
-const api = create({
-    baseURL: 'http://192.168.1.103:3000'
-});
-
-api.addResponseTransform(response => {
-    if (!response.ok) throw response;
+const api = axios.create({
+    baseURL: APP_URL
 });
 
 export default api;

@@ -1,41 +1,45 @@
 {
   "getScheduled": [
     {
-      "data": "2021-04-20",
+      "data": "2021-05-30",
       "schedules": {
-        "2021-04-20": {
+        "2021-05-30": {
           "events": [
             {
               "key": "0",
               "cliente": "Sivori",
-              "trabalho": "Pé e Mão",
-              "atendimento": "Casa",
+              "especialidade": "Pé e Mão",
+              "atendimento": "À Domicilio",
               "hora": "12:00",
-              "tempo": "03:00:00"
+              "tempo": "03:00",
+              "status": "Ativo"
             },
             {
               "key": "1",
               "cliente": "Junior",
-              "trabalho": "Mão",
-              "atendimento": "Casa",
+              "especialidade": "Mão",
+              "atendimento": "À Domicilio",
               "hora": "17:00",
-              "tempo": "01:00:00"
+              "tempo": "01:00",
+              "status": "Cancelado"
             },
             {
               "key": "2",
               "cliente": "Sivori",
-              "trabalho": "Pé e Mão",
-              "atendimento": "Casa",
+              "especialidade": "Pé e Mão",
+              "atendimento": "À Domicilio",
               "hora": "12:00",
-              "tempo": "03:00:00"
+              "tempo": "03:00",
+              "status": "Ativo"
             },
             {
               "key": "3",
               "cliente": "Junior",
-              "trabalho": "Mão",
-              "atendimento": "Casa",
+              "especialidade": "Mão",
+              "atendimento": "À Domicilio",
               "hora": "17:00",
-              "tempo": "01:00:00"
+              "tempo": "01:00",
+              "status": "Cancelado"
             }
           ],
           "selected": true,
@@ -44,17 +48,18 @@
       }
     },
     {
-      "data": "2021-04-22",
+      "data": "2021-06-01",
       "schedules": {
-        "2021-04-22": {
+        "2021-06-01": {
           "events": [
             {
               "key": "0",
               "cliente": "Maju",
-              "trabalho": "Pé e Mão",
-              "atendimento": "Casa",
+              "especialidade": "Pé e Mão",
+              "atendimento": "À Domicilio",
               "hora": "12:00",
-              "tempo": "03:00:00"
+              "tempo": "03:00",
+              "status": "Ativo"
             }
           ],
           "selected": true,
@@ -63,17 +68,18 @@
       }
     },
     {
-      "data": "2021-05-02",
+      "data": "2021-05-25",
       "schedules": {
-        "2021-05-02": {
+        "2021-05-25": {
           "events": [
             {
               "key": "0",
               "cliente": "Leo",
-              "trabalho": "Pé",
+              "especialidade": "Pé",
               "atendimento": "Estabelecimento",
               "hora": "12:00",
-              "tempo": "02:00:00"
+              "tempo": "02:00",
+              "status": "Ativo"
             }
           ],
           "selected": true,
@@ -81,6 +87,5 @@
         }
       }
     }
-  ],
-  "profile": { "name": "typicode" }
+  ]
 }

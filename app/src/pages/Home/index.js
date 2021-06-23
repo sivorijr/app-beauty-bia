@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ImageBackground } from 'react-native';
+import { Alert, ImageBackground } from 'react-native';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 
 import { Space, Container, Text, Button } from '../../components';
@@ -13,40 +13,66 @@ export default function HomeScreen({ navigation }) {
     const [scheduledMonth, setScheduledMonth] = useState(0);
 
     useEffect(() => {
-        api
-            .get("/getScheduled")
-            .then((response) => {
-                let count = 0;
+        const unsubscribe = navigation.addListener('focus', () => {
+            const currWeek = new Date();
+            
+            const firstWeek = currWeek.getDate() - currWeek.getDay() + 1;
+            const lastWeek = firstWeek + 6;
+            
+            const firstWeekDay = new Date(currWeek.setDate(firstWeek)).toISOString().split('T')[0];
+            const lastWeekDay = new Date(currWeek.setDate(lastWeek)).toISOString().split('T')[0];
 
-                response.data.map((element) => {
-                    element["schedules"][element["data"]]["events"].map(() => {
-                        count++;
-                    })
+            const filterWeek = {
+                dataInicio: firstWeekDay,
+                dataFim: lastWeekDay
+            };
+
+            api
+                .get("/agendamentos/" + JSON.stringify(filterWeek))
+                .then(response => {
+                    setScheduledWeek(response.data.length);
+                })
+                .catch((error) => {
+                    Alert.alert(
+                        "Ops...",
+                        "Ocorreu um erro ao buscar os itens.",
+                        [
+                            {
+                                text: "OK"
+                            }
+                        ]
+                    );
                 });
+                
+            const currMonth = new Date();
+            const firstMonthDay = new Date(currMonth.getFullYear(), currMonth.getMonth(), 1).toISOString().split('T')[0];
+            const lastMonthDay = new Date(currMonth.getFullYear(), currMonth.getMonth() + 1, 0).toISOString().split('T')[0];
 
-                setScheduledWeek(count);
-            })
-            .catch((error) => {
-                alert("Ocorreu um erro ao buscar os items");
-            });
+            const filterMonth = {
+                dataInicio: firstMonthDay,
+                dataFim: lastMonthDay
+            };
 
-        api
-            .get("/getScheduled")
-            .then((response) => {
-                let count = 0;
-
-                response.data.map((element) => {
-                    element["schedules"][element["data"]]["events"].map(() => {
-                        count++;
-                    })
+            api
+                .get("/agendamentos/" + JSON.stringify(filterMonth))
+                .then(response => {
+                    setScheduledMonth(response.data.length);
+                })
+                .catch((error) => {
+                    Alert.alert(
+                        "Ops...",
+                        "Ocorreu um erro ao buscar os itens.",
+                        [
+                            {
+                                text: "OK"
+                            }
+                        ]
+                    );
                 });
+        });
 
-                setScheduledMonth(count);
-            })
-            .catch((error) => {
-                alert("Ocorreu um erro ao buscar os items");
-            });
-    }, []);
+        return () => unsubscribe
+    }, [navigation]);
 
     return (
         <Container height='100%'>
