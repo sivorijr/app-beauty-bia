@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ImageBackground, FlatList, TouchableOpacity, TextInput, Alert } from 'react-native';
+import { ImageBackground, FlatList, TouchableOpacity, TextInput, Alert, SafeAreaView, ScrollView, } from 'react-native';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import CheckBox from '@react-native-community/checkbox';
@@ -31,25 +31,18 @@ export default function NovoAgendamentoScreen({ navigation }) {
     const [txtButton, setTxtButton] = useState("Mostrar Agenda");
     const [dadosForm, setDadosForm] = useState(
         {
-            novoCliente: false,
             nomeCliente: "",
             telefoneCliente: "",
-            cliente: "",
             atendimento: "",
-            especialidades: "",
-            duracao: "",
-            data: "",
-            hora: ""
+            especialidade: "",
+            duracao: "00:00",
+            data: new Date(),
+            // valor: 0
         }
     );
-    const [selectedNovoCliente, setSelectedNovoCliente] = useState(false);
-    const [selectedAtendimento, setSelectedAtendimento] = useState();
     const [especialidades, setEspecialidades] = useState([]);
-    const [selectedEspecialidade, setSelectedEspecialidade] = useState();
-    const [duracaoEspecialidade, setDuracaoEspecialidade] = useState('00:00');
-    const [date, setDate] = useState(new Date());
-    const [modeDate, setModeDate] = useState('date');
     const [showDate, setShowDate] = useState(false);
+    const [showHour, setShowHour] = useState(false);
 
     useEffect(() => {
         api
@@ -60,7 +53,8 @@ export default function NovoAgendamentoScreen({ navigation }) {
                 response.data.map(element => {
                     const especialidade = {
                         nome: element.nome,
-                        duracao: element.duracao
+                        duracao: element.duracao,
+                        // valor: element.valor
                     }
 
                     arr.push(especialidade);
@@ -158,33 +152,57 @@ export default function NovoAgendamentoScreen({ navigation }) {
     }
 
     const onPressButtonSubmit = () => {
-        api
-            .put("/agendamento/" + route.params.item.key + "/" + JSON.stringify({ status: "Cancelado" }))
-            .then(response => {
-                if(response.data.id) {
+        let error = false;
+
+        Object.values(dadosForm).forEach(element => {
+            if(!element) {
+                error = true;
+            }
+        });
+
+        if(new Date().getTime() > dadosForm.data.getTime()) {
+            error = true;
+        }
+
+        if(!error) {
+            api
+                .post("/agendamento/", { data: JSON.stringify(dadosForm) })
+                .then(response => {
+                    if(response.data._id) {
+                        Alert.alert(
+                            "Sucesso!",
+                            "Agendamento criado com sucesso!",
+                            [
+                                {
+                                    text: "OK",
+                                    onPress: () => navigation.goBack()
+                                }
+                            ]
+                        );
+                    }
+                })
+                .catch((error) => {
                     Alert.alert(
-                        "Sucesso!",
-                        response.data.message,
+                        "Ops...",
+                        "Ocorreu um erro ao buscar os itens.",
                         [
                             {
-                                text: "OK",
-                                onPress: () => navigation.goBack()
+                                text: "OK"
                             }
                         ]
                     );
-                }
-            })
-            .catch((error) => {
-                Alert.alert(
-                    "Ops...",
-                    "Ocorreu um erro ao buscar os itens.",
-                    [
-                        {
-                            text: "OK"
-                        }
-                    ]
-                );
-            });
+                });
+        } else{
+            Alert.alert(
+                "Ops...",
+                "Preencha o formulario corretamente para continuar!",
+                [
+                    {
+                        text: "OK"
+                    }
+                ]
+            );
+        }
     }
 
     const renderItem = ({ item }) => {
@@ -227,24 +245,37 @@ export default function NovoAgendamentoScreen({ navigation }) {
     }
 
     const onChangeEspecialidade = value => {
-        setSelectedEspecialidade(value);
+        setDadosForm(prevDadosForm => ({ ...prevDadosForm, especialidade: value }));
 
-        especialidades.map(element => {
-            if(element.nome == value) {
-                setDuracaoEspecialidade(element.duracao);
-            }
-        });
+        if(value) {
+            especialidades.map(element => {
+                if(element.nome == value) {
+                    setDadosForm(prevDadosForm => ({ ...prevDadosForm, duracao: element.duracao }));
+                }
+            });
+        } else{
+            setDadosForm(prevDadosForm => ({ ...prevDadosForm, duracao: "00:00" }));
+        }
     }
 
     const onChangeDate = (event, selectedDate) => {
-        const currentDate = selectedDate || date;
+        const currentDate = selectedDate || dadosForm.data;
         setShowDate(false);
-        setDate(currentDate);
+        setDadosForm(prevDadosForm => ({ ...prevDadosForm, data: currentDate }));
     };
 
     const showDatepicker = () => {
         setShowDate(true);
-        setModeDate('date');
+    };
+
+    const onChangeHour = (event, selectedHour) => {
+        const currentHour = selectedHour || dadosForm.data;
+        setShowHour(false);
+        setDadosForm(prevDadosForm => ({ ...prevDadosForm, data: currentHour }));
+    };
+
+    const showTimepicker = () => {
+        setShowHour(true);
     };
 
     const renderAgendamentos = () => {
@@ -325,171 +356,173 @@ export default function NovoAgendamentoScreen({ navigation }) {
                     >Detalhes</Text>
                 </Container>
                 <Space height={20} />
-                <Container
-                    backgroundColor={colors.green}
-                    paddingTop={10}
-                    paddingBottom={15}
-                    paddingHorizontal={10}
-                    marginHorizontal={20}
-                    borderRadius='6px'
-                >
-                    <Text
-                        color={colors.white}
-                        fontSize={18}
-                        fontWeight='normal'
-                    >Cliente novo?</Text>
-                    <CheckBox
-                        tintColors={{ true: colors.pink, false: colors.white }}
-                        value={dadosForm.novoCliente}
-                        onValueChange={value => { setDadosForm(prevDadosForm => ({ ...prevDadosForm, novoCliente: value })) }}
-                    />
-                    <Space height={10} />
-                    <Div border={'1px solid ' + colors.pinkLight} />
-                    <Space height={10} />
-                    {
-                        !dadosForm.novoCliente
-                        ?
-                            <>
-                                <Text
-                                    color={colors.white}
-                                    fontSize={18}
-                                    fontWeight='normal'
-                                >Cliente</Text>
-                                <Picker
-                                    color={colors.white}
-                                    selectedValue={selectedAtendimento}
-                                    onValueChange={value => setSelectedAtendimento(value)}
-                                    mode='dialog'
-                                    style={{ color:colors.white }}
-                                >
-                                    <Picker.Item label="Selecione" value="" />
-                                    <Picker.Item label="À Domicilio" value="À Domicilio" />
-                                    <Picker.Item label="Estabelecimento" value="Estabelecimento" />
-                                </Picker>
-                            </>
-                        :
-                            <>
-                                <Text
-                                    color={colors.white}
-                                    fontSize={18}
-                                    fontWeight='normal'
-                                >Cliente</Text>
-                                <TextInput
-                                    color={colors.white}
-                                    placeholder="Nome do cliente"
-                                />
-                                <Space height={10} />
-                                <Div border={'1px solid ' + colors.pinkLight} />
-                                <Space height={10} />
-                                <Text
-                                    color={colors.white}
-                                    fontSize={18}
-                                    fontWeight='normal'
-                                >Telefone</Text>
-                                <TextInputMask
-                                    type={'cel-phone'}
-                                    options={{
-                                        maskType: 'BRL',
-                                        withDDD: true,
-                                        dddMask: '(99) '
-                                    }}
-                                    color={colors.white}
-                                    placeholder="Telefone do cliente"
-                                />
-                            </>
-                    }
-                    <Space height={10} />
-                    <Div border={'1px solid ' + colors.pinkLight} />
-                    <Space height={10} />
-                    <Text
-                        color={colors.white}
-                        fontSize={18}
-                        fontWeight='normal'
-                    >Atendimento</Text>
-                    <Picker
-                        color={colors.white}
-                        selectedValue={selectedAtendimento}
-                        onValueChange={value => setSelectedAtendimento(value)}
-                        mode='dialog'
-                        style={{ color:colors.white }}
+                <ScrollView>
+                    <Container
+                        backgroundColor={colors.green}
+                        paddingTop={10}
+                        paddingBottom={15}
+                        paddingHorizontal={10}
+                        marginHorizontal={20}
+                        borderRadius='6px'
                     >
-                        <Picker.Item label="Selecione" value="" />
-                        <Picker.Item label="À Domicilio" value="À Domicilio" />
-                        <Picker.Item label="Estabelecimento" value="Estabelecimento" />
-                    </Picker>
-                    <Space height={10} />
-                    <Div border={'1px solid ' + colors.pinkLight} />
-                    <Space height={10} />
-                    <Text
-                        color={colors.white}
-                        fontSize={18}
-                        fontWeight='normal'
-                    >Especialidade</Text>
-                    <Picker
-                        color={colors.white}
-                        selectedValue={selectedEspecialidade}
-                        onValueChange={onChangeEspecialidade}
-                        mode='dialog'
-                        style={{ color:colors.white }}
-                    >
-                        <Picker.Item label="Selecione" value="" />
-                        {/* {
-                            especialidades.map(especialidade => {
-                                return <Picker.Item label={especialidade.nome} value={especialidade.nome} />
-                            })
-                        } */}
-                    </Picker>
-                    <Div border={'1px solid ' + colors.pinkLight} />
-                    <Space height={10} />
-                    <Text
-                        color={colors.white}
-                        fontSize={18}
-                        fontWeight='normal'
-                    >Duração</Text>
-                    <TextInput
-                        editable={false}
-                        color={colors.white}
-                        value={duracaoEspecialidade}
-                    />
-                    <Space height={10} />
-                    <Div border={'1px solid ' + colors.pinkLight} />
-                    <Space height={10} />
-                    <Text
-                        color={colors.white}
-                        fontSize={18}
-                        fontWeight='normal'
-                    >Data</Text>
-                    <TouchableOpacity onPress={showDatepicker}>
+                        <Text
+                            color={colors.white}
+                            fontSize={18}
+                            fontWeight='normal'
+                        >Cliente</Text>
+                        <TextInput
+                            color={colors.white}
+                            placeholder="Nome do cliente"
+                            value={dadosForm.nomeCliente}
+                            onChangeText={value => { setDadosForm(prevDadosForm => ({ ...prevDadosForm, nomeCliente: value })) }}
+                        />
+                        <Space height={10} />
+                        <Div border={'1px solid ' + colors.pinkLight} />
+                        <Space height={10} />
+                        <Text
+                            color={colors.white}
+                            fontSize={18}
+                            fontWeight='normal'
+                        >Telefone</Text>
+                        <TextInputMask
+                            type={'cel-phone'}
+                            options={{
+                                maskType: 'BRL',
+                                withDDD: true,
+                                dddMask: '(99) '
+                            }}
+                            color={colors.white}
+                            placeholder="Telefone do cliente"
+                            value={dadosForm.telefoneCliente}
+                            onChangeText={value => { setDadosForm(prevDadosForm => ({ ...prevDadosForm, telefoneCliente: value })) }}
+                        />
+                        <Space height={10} />
+                        <Div border={'1px solid ' + colors.pinkLight} />
+                        <Space height={10} />
+                        <Text
+                            color={colors.white}
+                            fontSize={18}
+                            fontWeight='normal'
+                        >Atendimento</Text>
+                        <Picker
+                            color={colors.white}
+                            selectedValue={dadosForm.atendimento}
+                            onValueChange={value => { setDadosForm(prevDadosForm => ({ ...prevDadosForm, atendimento: value })) }}
+                            mode='dialog'
+                            style={{ color:colors.white }}
+                        >
+                            <Picker.Item label="Selecione" value="" />
+                            <Picker.Item label="À Domicilio" value="À Domicilio" />
+                            <Picker.Item label="Estabelecimento" value="Estabelecimento" />
+                        </Picker>
+                        <Space height={10} />
+                        <Div border={'1px solid ' + colors.pinkLight} />
+                        <Space height={10} />
+                        <Text
+                            color={colors.white}
+                            fontSize={18}
+                            fontWeight='normal'
+                        >Especialidade</Text>
+                        <Picker
+                            color={colors.white}
+                            selectedValue={dadosForm.especialidade}
+                            onValueChange={onChangeEspecialidade}
+                            mode='dialog'
+                            style={{ color:colors.white }}
+                        >
+                            <Picker.Item label="Selecione" value="" />
+                            {
+                                especialidades.map((especialidade, key) => {
+                                    return <Picker.Item key={key} label={especialidade.nome} value={especialidade.nome} />
+                                })
+                            }
+                        </Picker>
+                        <Div border={'1px solid ' + colors.pinkLight} />
+                        <Space height={10} />
+                        <Text
+                            color={colors.white}
+                            fontSize={18}
+                            fontWeight='normal'
+                        >Duração</Text>
                         <TextInput
                             editable={false}
                             color={colors.white}
-                            value={new Date(date).toISOString().substr(0, 10).split('-').reverse().join('/')}
+                            value={dadosForm.duracao}
                         />
-                    </TouchableOpacity>
-                    {
-                        showDate
-                        ?
-                            <DateTimePicker
-                                value={date}
-                                mode={modeDate}
-                                onChange={onChangeDate}
-                                minimumDate={new Date()}
+                        <Space height={10} />
+                        <Div border={'1px solid ' + colors.pinkLight} />
+                        <Space height={10} />
+                        <Text
+                            color={colors.white}
+                            fontSize={18}
+                            fontWeight='normal'
+                        >Data</Text>
+                        <TouchableOpacity onPress={showDatepicker}>
+                            <TextInput
+                                editable={false}
+                                color={colors.white}
+                                value={dadosForm.data.toISOString().split("T")[0].split('-').reverse().join('/')}
                             />
-                        :
-                            <>
-                            </>
-                    }
-                </Container>
-                <Container paddingVertical={20} paddingHorizontal={20}>
-                    <Button
-                        title='Agendar'
-                        color={colors.pink}
-                        fontSize={20}
-                        fontWeight='bold'
-                        textAlign='center'
-                        onPress={onPressButtonSubmit}
-                    />
-                </Container>
+                        </TouchableOpacity>
+                        {
+                            showDate
+                            ?
+                                <DateTimePicker
+                                    value={dadosForm.data}
+                                    mode={"date"}
+                                    onChange={onChangeDate}
+                                    minimumDate={new Date()}
+                                />
+                            :
+                                <>
+                                </>
+                        }
+                        <Space height={10} />
+                        <Div border={'1px solid ' + colors.pinkLight} />
+                        <Space height={10} />
+                        <Text
+                            color={colors.white}
+                            fontSize={18}
+                            fontWeight='normal'
+                        >Hora</Text>
+                        <TouchableOpacity onPress={showTimepicker}>
+                            <TextInput
+                                editable={false}
+                                color={colors.white}
+                                value={dadosForm.data.toLocaleTimeString("pt-BR").substr(0, 5)}
+                            />
+                        </TouchableOpacity>
+                        {
+                            showHour
+                            ?
+                                <DateTimePicker
+                                    value={dadosForm.data}
+                                    mode={"time"}
+                                    onChange={onChangeHour}
+                                />
+                            :
+                                <>
+                                </>
+                        }
+                    </Container>
+                    {/* <Space height={10} />
+                    <Text
+                        color={colors.white}
+                        fontSize={18}
+                        fontWeight='normal'
+                    >R$ {dadosForm.valor}</Text>
+                    <Space height={10} /> */}
+                    <Container paddingVertical={20} paddingHorizontal={20}>
+                        <Button
+                            title='Agendar'
+                            color={colors.pink}
+                            fontSize={20}
+                            fontWeight='bold'
+                            textAlign='center'
+                            onPress={onPressButtonSubmit}
+                        />
+                    </Container>
+                </ScrollView>
             </>
         );
     }

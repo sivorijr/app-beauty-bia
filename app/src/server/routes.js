@@ -15,7 +15,7 @@ routes.get("/agendamentos/:filter", AgendamentoController.getAllByDates);
 routes.post("/agendamento", AgendamentoController.set);
 routes.get("/agendamento/:id", AgendamentoController.get);
 routes.delete("/agendamento/:id", AgendamentoController.delete);
-routes.put("/agendamento/:id/:obj", AgendamentoController.put);
+routes.put("/agendamento/:id", AgendamentoController.put);
 
 routes.get("/clientes", ClienteController.getAll);
 

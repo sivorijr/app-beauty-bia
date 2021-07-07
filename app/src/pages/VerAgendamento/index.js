@@ -18,7 +18,7 @@ export default function VerAgendamentoScreen({ navigation, route }) {
 
     const onPressCancelarAgendamento = () => {
         api
-            .put("/agendamento/" + route.params.item.key + "/" + JSON.stringify({ status: "Cancelado" }))
+            .put("/agendamento/" + route.params.item.key, { data: JSON.stringify({ status: "Cancelado" }) })
             .then(response => {
                 if(response.data.id) {
                     Alert.alert(

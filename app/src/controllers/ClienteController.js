@@ -69,19 +69,25 @@ class ClienteController {
                 objCliente.telefone = req.params.telefone;
             }
 
-            let cliente = await Clientes.findOne(objCliente, async (err, resCliente) => {
+            let cliente = await Clientes.findOne({ telefone: objCliente.telefone }, async (err, resCliente) => {
                 if(err) {
                     throw err;
                 }
 
                 if(resCliente) {
+                    if(resCliente.nome != objCliente.nome) {
+                        await this.put(null, null, {
+                            id: resCliente._id,
+                            nome: objCliente.nome
+                        });
+                    }
+
                     return resCliente;
                 }
             });
 
             if(!cliente) {
-                const clienteController = new ClienteController();
-                cliente = await clienteController.set(null, null, objCliente);
+                cliente = await this.set(null, null, objCliente);
             }
 
             return obj ? cliente : res.json(cliente);
@@ -95,6 +101,39 @@ class ClienteController {
             await Cliente.findByIdAndDelete(req.params.id);
 
             return res.send("Cliente deleted with success");
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    async put(req, res, obj) {
+        try {
+            let id = "";
+
+            let objCliente = {
+                nome: ""
+            }
+
+            if(obj) {
+                id = obj.id;
+                objCliente.nome = obj.nome;
+            } else{
+                id = req.params.id;
+                objCliente.nome = req.params.nome;
+            }
+
+            await Clientes.findByIdAndUpdate(id, objCliente, { new: true }, (err, model) => {
+                if(err) {
+                    throw err;
+                }
+
+                const response = {
+                    message: "Cliente alterado com sucesso!",
+                    id: model._id
+                }
+    
+                return obj ? response : res.json(response);
+            });
         } catch (err) {
             throw err;
         }

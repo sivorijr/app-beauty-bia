@@ -50,18 +50,21 @@ class AgendamentoController {
 
     async set(req, res) {
         try {
-            const splitCliente = req.body.cliente.split(' - ');
+            const obj = JSON.parse(req.body.data);
 
-            const cliente = await Clientes.getByNomeAndTelefone(null, null, { nome: splitCliente[0], telefone: splitCliente[1] });
-            const especialidade = await Especialidades.getByNome(null, null, { nome: req.body.trabalho });
+            const cliente = await Clientes.getByNomeAndTelefone(null, null, { nome: obj.nomeCliente, telefone: obj.telefoneCliente });
+            const especialidade = await Especialidades.getByNome(null, null, { nome: obj.especialidade });
+            
+            let data = new Date(obj.data);
+            data.setHours(data.getHours() - 3);
 
             const newAgendamento = {
                 clienteID: mongoose.Types.ObjectId(cliente._id),
                 especialidadeID: mongoose.Types.ObjectId(especialidade._id),
                 atendimento: req.body.atendimento,
-                tempo: req.body.tempo,
-                data: req.body.data,
-                status: req.body.status
+                tempo: req.body.duracao,
+                data: data,
+                status: "Ativo"
             }
 
             const agendamento = await Agendamentos.create(newAgendamento);
@@ -103,7 +106,7 @@ class AgendamentoController {
 
     async put(req, res) {
         try {
-            const obj = JSON.parse(req.params.obj);
+            const obj = JSON.parse(req.body.data);
 
             await Agendamentos.findByIdAndUpdate(req.params.id, obj, { new: true }, (err, model) => {
                 if(err) {
