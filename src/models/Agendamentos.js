@@ -18,11 +18,6 @@ const Agendamentos = new mongoose.Schema({
         require: true
     },
 
-    tempo: {
-        type: String,
-        require: true
-    },
-
     data: {
         type: Date,
         require: true
@@ -33,6 +28,7 @@ const Agendamentos = new mongoose.Schema({
         require: true
     }
 }, {
+    collection: 'agendamentos',
     timestamps: true
 });
 

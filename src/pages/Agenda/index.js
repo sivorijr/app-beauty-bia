@@ -29,7 +29,7 @@ export default function AgendaScreen({ navigation }) {
             api
                 .get("/agendamentos")
                 .then(response => {
-                    const arr = {};
+                    let arr = {};
 
                     response.data.map(agendamento => {
                         const dataAgendamento = agendamento.data.split("T")[0];
@@ -42,7 +42,7 @@ export default function AgendaScreen({ navigation }) {
                                 especialidade: agendamento.especialidadeID.nome,
                                 atendimento: agendamento.atendimento,
                                 hora: agendamento.data.split("T")[1].substring(0,5),
-                                tempo: agendamento.tempo,
+                                tempo: agendamento.especialidadeID.duracao,
                                 status: agendamento.status
                             }
 
@@ -62,7 +62,7 @@ export default function AgendaScreen({ navigation }) {
                                 especialidade: agendamento.especialidadeID.nome,
                                 atendimento: agendamento.atendimento,
                                 hora: agendamento.data.split("T")[1].substring(0,5),
-                                tempo: agendamento.tempo,
+                                tempo: agendamento.especialidadeID.duracao,
                                 status: agendamento.status
                             }
 

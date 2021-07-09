@@ -21,6 +21,7 @@ const Especialidades = new mongoose.Schema({
         require: true
     }
 }, {
+    collection: 'especialidades',
     timestamps: true
 });
 
