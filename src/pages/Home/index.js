@@ -86,62 +86,128 @@ export default function HomeScreen({ navigation }) {
                     >Visão Geral</Text>
                 </Container>
                 <Space height={20} />
-                <Container
-                    backgroundColor={colors.green}
-                    paddingVertical={20}
-                    marginHorizontal={20}
-                    borderRadius='6px'
-                >
-                    <AnimatedCircularProgress
-                        size={120}
-                        width={15}
-                        fill={!scheduledWeek || scheduledWeek == 0 ? 0.1 : scheduledWeek * 5}
-                        tintColor={colors.pink}
-                        backgroundColor={colors.white}
-                        style={{ alignItems: 'center', transform: [{ rotate: '-90deg'}] }}
-                    />
-                    <Space height={10} />
-                    <Text
-                        color={colors.white}
-                        fontSize={20}
-                        fontWeight='bold'
-                        textAlign='center'
-                    >{scheduledWeek}</Text>
-                    <Text
-                        color={colors.white}
-                        fontSize={20}
-                        fontWeight='bold'
-                        textAlign='center'
-                    >Agendamentos essa semana</Text>
+                <Container flexDirection='row' justifyContent='center'>
+                    <Container
+                        backgroundColor={colors.green}
+                        paddingVertical={20}
+                        marginHorizontal={5}
+                        borderRadius='6px'
+                        width='45%'
+                    >
+                        <AnimatedCircularProgress
+                            size={100}
+                            width={15}
+                            fill={!scheduledWeek || scheduledWeek == 0 ? 0.1 : scheduledWeek * 5}
+                            tintColor={colors.pink}
+                            backgroundColor={colors.white}
+                            style={{ alignItems: 'center', transform: [{ rotate: '-90deg'}] }}
+                        />
+                        <Space height={10} />
+                        <Text
+                            color={colors.white}
+                            fontSize={20}
+                            fontWeight='bold'
+                            textAlign='center'
+                        >{scheduledWeek}</Text>
+                        <Text
+                            color={colors.white}
+                            fontSize={20}
+                            fontWeight='bold'
+                            textAlign='center'
+                        >Agendamentos essa semana</Text>
+                    </Container>
+                    <Space height={20} />
+                    <Container
+                        backgroundColor={colors.green}
+                        paddingVertical={20}
+                        marginHorizontal={5}
+                        borderRadius='6px'
+                        width='45%'
+                    >
+                        <AnimatedCircularProgress
+                            size={100}
+                            width={15}
+                            fill={!scheduledMonth || scheduledMonth == 0 ? 0.1 : scheduledMonth}
+                            tintColor={colors.pink}
+                            backgroundColor={colors.white}
+                            style={{ alignItems: 'center', transform: [{ rotate: '-90deg'}] }}
+                        />
+                        <Space height={10} />
+                        <Text
+                            color={colors.white}
+                            fontSize={20}
+                            fontWeight='bold'
+                            textAlign='center'
+                        >{scheduledMonth}</Text>
+                        <Text
+                            color={colors.white}
+                            fontSize={20}
+                            fontWeight='bold'
+                            textAlign='center'
+                        >Agendamentos esse mês</Text>
+                    </Container>
                 </Container>
                 <Space height={20} />
-                <Container
-                    backgroundColor={colors.green}
-                    paddingVertical={20}
-                    marginHorizontal={20}
-                    borderRadius='6px'
-                >
-                    <AnimatedCircularProgress
-                        size={120}
-                        width={15}
-                        fill={!scheduledMonth || scheduledMonth == 0 ? 0.1 : scheduledMonth}
-                        tintColor={colors.pink}
-                        backgroundColor={colors.white}
-                        style={{ alignItems: 'center', transform: [{ rotate: '-90deg'}] }}
-                    />
-                    <Space height={10} />
-                    <Text
-                        color={colors.white}
-                        fontSize={20}
-                        fontWeight='bold'
-                        textAlign='center'
-                    >{scheduledMonth}</Text>
-                    <Text
-                        color={colors.white}
-                        fontSize={20}
-                        fontWeight='bold'
-                        textAlign='center'
-                    >Agendamentos esse mês</Text>
+                <Container flexDirection='row' justifyContent='center'>
+                    <Container
+                        backgroundColor={colors.green}
+                        paddingVertical={20}
+                        marginHorizontal={5}
+                        borderRadius='6px'
+                        width='45%'
+                    >
+                        <AnimatedCircularProgress
+                            size={100}
+                            width={15}
+                            fill={!scheduledWeek || scheduledWeek == 0 ? 0.1 : scheduledWeek / 1.5}
+                            tintColor={colors.pink}
+                            backgroundColor={colors.white}
+                            style={{ alignItems: 'center', transform: [{ rotate: '-90deg'}] }}
+                        />
+                        <Space height={10} />
+                        <Text
+                            color={colors.white}
+                            fontSize={20}
+                            fontWeight='bold'
+                            textAlign='center'
+                        >{scheduledWeek}</Text>
+                        <Text
+                            color={colors.white}
+                            fontSize={20}
+                            fontWeight='bold'
+                            textAlign='center'
+                        >Ganhos essa semana</Text>
+                    </Container>
+                    <Space height={20} />
+                    <Container
+                        backgroundColor={colors.green}
+                        paddingVertical={20}
+                        marginHorizontal={5}
+                        borderRadius='6px'
+                        width='45%'
+                    >
+                        <AnimatedCircularProgress
+                            size={100}
+                            width={15}
+                            fill={!scheduledMonth || scheduledMonth == 0 ? 0.1 : scheduledMonth / 6}
+                            tintColor={colors.pink}
+                            backgroundColor={colors.white}
+                            style={{ alignItems: 'center', transform: [{ rotate: '-90deg'}] }}
+                        />
+                        <Space height={10} />
+                        <Text
+                            color={colors.white}
+                            fontSize={20}
+                            fontWeight='bold'
+                            textAlign='center'
+                        >{scheduledMonth}</Text>
+                        <Text
+                            color={colors.white}
+                            fontSize={20}
+                            fontWeight='bold'
+                            textAlign='center'
+                        >Ganhos esse mês</Text>
+                    </Container>
                 </Container>
                 <Space height={10} />
                 <Container paddingVertical={20} paddingHorizontal={20}>

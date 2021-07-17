@@ -50,7 +50,8 @@ class AgendamentoController {
 
     async set(req, res) {
         try {
-            const obj = JSON.parse(req.body.data);
+            // const obj = JSON.parse(req.body.data);
+            const obj = req.body.data;
 
             const cliente = await Clientes.getByNomeAndTelefone(null, null, { nome: obj.nomeCliente, telefone: obj.telefoneCliente });
             const especialidade = await Especialidades.getByNome(null, null, { nome: obj.especialidade });
@@ -61,8 +62,8 @@ class AgendamentoController {
             const newAgendamento = {
                 clienteID: mongoose.Types.ObjectId(cliente._id),
                 especialidadeID: mongoose.Types.ObjectId(especialidade._id),
-                atendimento: req.body.atendimento,
-                tempo: req.body.duracao,
+                atendimento: obj.atendimento,
+                tempo: obj.duracao,
                 data: data,
                 status: "Ativo"
             }
