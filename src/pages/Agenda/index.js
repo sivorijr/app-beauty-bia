@@ -43,6 +43,7 @@ export default function AgendaScreen({ navigation }) {
                                 atendimento: agendamento.atendimento,
                                 hora: agendamento.data.split("T")[1].substring(0,5),
                                 tempo: agendamento.especialidadeID.duracao,
+                                valor: agendamento.especialidadeID.valor,
                                 status: agendamento.status
                             }
 
@@ -63,6 +64,7 @@ export default function AgendaScreen({ navigation }) {
                                 atendimento: agendamento.atendimento,
                                 hora: agendamento.data.split("T")[1].substring(0,5),
                                 tempo: agendamento.especialidadeID.duracao,
+                                valor: agendamento.especialidadeID.valor,
                                 status: agendamento.status
                             }
 

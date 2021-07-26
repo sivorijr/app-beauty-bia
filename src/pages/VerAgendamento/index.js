@@ -1,5 +1,6 @@
 import React from 'react';
 import { Alert, ImageBackground } from 'react-native';
+import { TextInputMask } from 'react-native-masked-text';
 
 import { Space, Container, Text, Button, Div } from '../../components';
 import api from '../../services/api';
@@ -99,6 +100,22 @@ export default function VerAgendamentoScreen({ navigation, route }) {
                         <Text color={colors.white} fontSize={20} fontWeight='normal'>{route.params.item.status}</Text>
                     </Container>
                     <Div border={'1px solid ' + colors.pinkLight} />
+                    <Space height={20} />
+                    <TextInputMask
+                        type={'money'}
+                        options={{
+                            precision: 2,
+                            separator: ',',
+                            delimiter: '.',
+                            unit: 'R$ ',
+                            suffixUnit: ''
+                        }}
+                        value={route.params.item.valor}
+                        color={colors.white}
+                        fontSize={28}
+                        fontWeight='bold'
+                        textAlign='center'
+                    />
                     <Space height={10} />
                     {
                         showCancelar

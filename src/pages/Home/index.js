@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Alert, ImageBackground } from 'react-native';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
+import { TextInputMask } from 'react-native-masked-text';
 
 import { Space, Container, Text, Button } from '../../components';
 import api from '../../services/api';
@@ -11,6 +12,8 @@ const image = { uri: "https://png.pngtree.com/thumb_back/fw800/background/201902
 export default function HomeScreen({ navigation }) {
     const [scheduledWeek, setScheduledWeek] = useState(0);
     const [scheduledMonth, setScheduledMonth] = useState(0);
+    const [totalWeek, setTotalWeek] = useState(0);
+    const [totalMonth, setTotalMonth] = useState(0);
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
@@ -31,6 +34,14 @@ export default function HomeScreen({ navigation }) {
                 .get("/agendamentos/" + JSON.stringify(filterWeek))
                 .then(response => {
                     setScheduledWeek(response.data.length);
+
+                    let valor = 0;
+
+                    response.data.forEach(element => {
+                        valor += element.especialidadeID.valor;
+                    });
+
+                    setTotalWeek(valor);
                 })
                 .catch((error) => {
                     Alert.alert(
@@ -57,6 +68,14 @@ export default function HomeScreen({ navigation }) {
                 .get("/agendamentos/" + JSON.stringify(filterMonth))
                 .then(response => {
                     setScheduledMonth(response.data.length);
+                    
+                    let valor = 0;
+
+                    response.data.forEach(element => {
+                        valor += element.especialidadeID.valor;
+                    });
+
+                    setTotalMonth(valor);
                 })
                 .catch((error) => {
                     Alert.alert(
@@ -100,7 +119,7 @@ export default function HomeScreen({ navigation }) {
                             fill={!scheduledWeek || scheduledWeek == 0 ? 0.1 : scheduledWeek * 5}
                             tintColor={colors.pink}
                             backgroundColor={colors.white}
-                            style={{ alignItems: 'center', transform: [{ rotate: '-90deg'}] }}
+                            style={{ alignItems: 'center', transform: [{ rotate: '-90deg' }] }}
                         />
                         <Space height={10} />
                         <Text
@@ -130,7 +149,7 @@ export default function HomeScreen({ navigation }) {
                             fill={!scheduledMonth || scheduledMonth == 0 ? 0.1 : scheduledMonth}
                             tintColor={colors.pink}
                             backgroundColor={colors.white}
-                            style={{ alignItems: 'center', transform: [{ rotate: '-90deg'}] }}
+                            style={{ alignItems: 'center', transform: [{ rotate: '-90deg' }] }}
                         />
                         <Space height={10} />
                         <Text
@@ -159,18 +178,27 @@ export default function HomeScreen({ navigation }) {
                         <AnimatedCircularProgress
                             size={100}
                             width={15}
-                            fill={!scheduledWeek || scheduledWeek == 0 ? 0.1 : scheduledWeek / 1.5}
+                            fill={!totalWeek || totalWeek == 0 ? 0.1 : totalWeek / 1.5}
                             tintColor={colors.pink}
                             backgroundColor={colors.white}
-                            style={{ alignItems: 'center', transform: [{ rotate: '-90deg'}] }}
+                            style={{ alignItems: 'center', transform: [{ rotate: '-90deg' }] }}
                         />
                         <Space height={10} />
-                        <Text
+                        <TextInputMask
+                            type={'money'}
+                            options={{
+                                precision: 2,
+                                separator: ',',
+                                delimiter: '.',
+                                unit: 'R$ ',
+                                suffixUnit: ''
+                            }}
+                            value={totalWeek}
                             color={colors.white}
                             fontSize={20}
                             fontWeight='bold'
                             textAlign='center'
-                        >{scheduledWeek}</Text>
+                        />
                         <Text
                             color={colors.white}
                             fontSize={20}
@@ -189,18 +217,27 @@ export default function HomeScreen({ navigation }) {
                         <AnimatedCircularProgress
                             size={100}
                             width={15}
-                            fill={!scheduledMonth || scheduledMonth == 0 ? 0.1 : scheduledMonth / 6}
+                            fill={!totalMonth || totalMonth == 0 ? 0.1 : totalMonth / 6}
                             tintColor={colors.pink}
                             backgroundColor={colors.white}
-                            style={{ alignItems: 'center', transform: [{ rotate: '-90deg'}] }}
+                            style={{ alignItems: 'center', transform: [{ rotate: '-90deg' }] }}
                         />
                         <Space height={10} />
-                        <Text
+                        <TextInputMask
+                            type={'money'}
+                            options={{
+                                precision: 2,
+                                separator: ',',
+                                delimiter: '.',
+                                unit: 'R$ ',
+                                suffixUnit: ''
+                            }}
+                            value={totalWeek}
                             color={colors.white}
                             fontSize={20}
                             fontWeight='bold'
                             textAlign='center'
-                        >{scheduledMonth}</Text>
+                        />
                         <Text
                             color={colors.white}
                             fontSize={20}

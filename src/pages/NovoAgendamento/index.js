@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { ImageBackground, FlatList, TouchableOpacity, TextInput, Alert, SafeAreaView, ScrollView, } from 'react-native';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import CheckBox from '@react-native-community/checkbox';
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { TextInputMask } from 'react-native-masked-text';
@@ -37,7 +36,7 @@ export default function NovoAgendamentoScreen({ navigation }) {
             especialidade: "",
             duracao: "00:00",
             data: new Date(),
-            // valor: 0
+            valor: 0
         }
     );
     const [especialidades, setEspecialidades] = useState([]);
@@ -54,7 +53,7 @@ export default function NovoAgendamentoScreen({ navigation }) {
                     const especialidade = {
                         nome: element.nome,
                         duracao: element.duracao,
-                        // valor: element.valor
+                        valor: element.valor
                     }
 
                     arr.push(especialidade);
@@ -104,6 +103,7 @@ export default function NovoAgendamentoScreen({ navigation }) {
                                 atendimento: agendamento.atendimento,
                                 hora: agendamento.data.split("T")[1].substring(0,5),
                                 tempo: agendamento.tempo,
+                                valor: agendamento.especialidadeID.valor,
                                 status: agendamento.status
                             }
 
@@ -124,6 +124,7 @@ export default function NovoAgendamentoScreen({ navigation }) {
                                 atendimento: agendamento.atendimento,
                                 hora: agendamento.data.split("T")[1].substring(0,5),
                                 tempo: agendamento.tempo,
+                                valor: agendamento.especialidadeID.valor,
                                 status: agendamento.status
                             }
 
@@ -250,11 +251,11 @@ export default function NovoAgendamentoScreen({ navigation }) {
         if(value) {
             especialidades.map(element => {
                 if(element.nome == value) {
-                    setDadosForm(prevDadosForm => ({ ...prevDadosForm, duracao: element.duracao }));
+                    setDadosForm(prevDadosForm => ({ ...prevDadosForm, duracao: element.duracao, valor: element.valor }));
                 }
             });
         } else{
-            setDadosForm(prevDadosForm => ({ ...prevDadosForm, duracao: "00:00" }));
+            setDadosForm(prevDadosForm => ({ ...prevDadosForm, duracao: "00:00", valor: 0 }));
         }
     }
 
@@ -504,14 +505,25 @@ export default function NovoAgendamentoScreen({ navigation }) {
                                 <>
                                 </>
                         }
+                        <Div border={'1px solid ' + colors.pinkLight} />
+                        <Space height={10} />
+                        <TextInputMask
+                            type={'money'}
+                            options={{
+                                precision: 2,
+                                separator: ',',
+                                delimiter: '.',
+                                unit: 'R$ ',
+                                suffixUnit: ''
+                            }}
+                            value={dadosForm.valor}
+                            color={colors.white}
+                            fontSize={28}
+                            fontWeight='bold'
+                            textAlign='center'
+                        />
                     </Container>
-                    {/* <Space height={10} />
-                    <Text
-                        color={colors.white}
-                        fontSize={18}
-                        fontWeight='normal'
-                    >R$ {dadosForm.valor}</Text>
-                    <Space height={10} /> */}
+                    <Space height={10} />
                     <Container paddingVertical={20} paddingHorizontal={20}>
                         <Button
                             title='Agendar'
