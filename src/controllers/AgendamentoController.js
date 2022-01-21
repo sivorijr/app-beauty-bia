@@ -26,10 +26,8 @@ class AgendamentoController {
 
     async getAllByDates(req, res) {
         try {
-            const dados = JSON.parse(req.params.filter);
-
-            const dataInicio = new Date(dados.dataInicio).toISOString();
-            const dataFim = new Date(dados.dataFim + "T23:59:59.000Z").toISOString();
+            const dataInicio = new Date(req.params.dataInicio).toISOString();
+            const dataFim = new Date(req.params.dataFim + "T23:59:59.000Z").toISOString();
 
             const agendamentos = await Agendamentos
                 .find({ data: { $gte: dataInicio, $lt: dataFim } })

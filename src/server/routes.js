@@ -10,7 +10,7 @@ const EspecialidadeController = require("../controllers/EspecialidadeController"
 routes.get("/", (req, res) => { return res.send("BeautyBia API by Sivori Junior") });
 
 routes.get("/agendamentos", AgendamentoController.getAll);
-routes.get("/agendamentos/:filter", AgendamentoController.getAllByDates);
+routes.get("/agendamentos/:dataInicio/:dataFim", AgendamentoController.getAllByDates);
 
 routes.post("/agendamento", AgendamentoController.set);
 routes.get("/agendamento/:id", AgendamentoController.get);
